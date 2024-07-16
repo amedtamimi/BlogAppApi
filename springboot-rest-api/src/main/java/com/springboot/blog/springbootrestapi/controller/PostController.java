@@ -7,7 +7,9 @@ import com.springboot.blog.springbootrestapi.service.Impl.PostServiceImpl;
 import com.springboot.blog.springbootrestapi.utils.AppConstants;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +24,12 @@ public class PostController {
 
     }
     //add all the crud methods for the post
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto){
-        return ResponseEntity.ok(postService.createPost(postDto));
+        return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping({"/{id}"})
     public ResponseEntity<PostDto>updatePost(@Valid @RequestBody PostDto postDto){
         return ResponseEntity.ok(postService.updatePost(postDto, postDto.getId()));
