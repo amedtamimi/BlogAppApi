@@ -13,7 +13,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.List;
+
+@RestController
 @RequestMapping("/api/posts")
 public class PostController {
     private final PostServiceImpl postService;
@@ -54,6 +56,11 @@ public class PostController {
     @DeleteMapping("/{id}")
     public void deletePostById(@PathVariable Long id){
         postService.deletePostById(id);
+    }
+
+    @GetMapping("{categoryId}")
+    public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable(value = "categoryId") Long categoryId){
+        return ResponseEntity.ok(postService.getPostsByCategory(categoryId));
     }
 
 
