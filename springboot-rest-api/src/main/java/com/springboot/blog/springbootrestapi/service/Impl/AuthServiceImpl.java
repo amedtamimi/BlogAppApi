@@ -7,6 +7,7 @@ import com.springboot.blog.springbootrestapi.entity.User;
 import com.springboot.blog.springbootrestapi.exception.BlogApiException;
 import com.springboot.blog.springbootrestapi.repository.RoleRepository;
 import com.springboot.blog.springbootrestapi.repository.UserRepository;
+import com.springboot.blog.springbootrestapi.security.JwtTokenProvider;
 import com.springboot.blog.springbootrestapi.service.AuthService;
 import com.springboot.blog.springbootrestapi.utils.PasswordGeneratorEncoder;
 import org.modelmapper.ModelMapper;
@@ -29,17 +30,21 @@ public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private JwtTokenProvider jwtTokenProvider;
+
 
     public AuthServiceImpl(AuthenticationManager authenticationManager,
                            ModelMapper modelMapper,
                            UserRepository userRepository,
                            RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -70,7 +75,8 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsernameOrEmail(), loginDto.getPassword()));
          SecurityContextHolder.getContext().setAuthentication(authentication);
-        return "User logged in successfully";
+
+        return jwtTokenProvider.generateToken(authentication);
     }
 
     private User mapToUserEntity(RegisterDto registerDto){

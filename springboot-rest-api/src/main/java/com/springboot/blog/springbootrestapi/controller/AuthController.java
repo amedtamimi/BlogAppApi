@@ -1,5 +1,6 @@
 package com.springboot.blog.springbootrestapi.controller;
 
+import com.springboot.blog.springbootrestapi.dto.JwtAuthResponse;
 import com.springboot.blog.springbootrestapi.dto.LoginDto;
 import com.springboot.blog.springbootrestapi.dto.RegisterDto;
 import com.springboot.blog.springbootrestapi.service.AuthService;
@@ -21,9 +22,11 @@ public class AuthController {
         this.authService = authService;
     }
 @PostMapping(value = {"/login","/signIn"})
-    public ResponseEntity<String> loginUser(@RequestBody LoginDto loginDto){
-        String response = authService.loginUser(loginDto);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<JwtAuthResponse> loginUser(@RequestBody LoginDto loginDto){
+        String token = authService.loginUser(loginDto);
+        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
     //add the register user method
